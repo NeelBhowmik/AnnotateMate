@@ -26,8 +26,8 @@ A open-source tool to support annotation files.
     ~~~
 
 ## TODO
-- [] visualise
-- [] merge
-- [] convert
-- [] extract category
-- [] split
+- [ ] visualise
+- [ ] merge
+- [ ] convert
+- [ ] extract category
+- [ ] split
