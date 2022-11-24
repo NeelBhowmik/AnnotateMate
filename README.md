@@ -11,6 +11,10 @@ A open-source tool to support annotation files.
 - [&check;] json
 - [~] yml
 
+### Supported annotation format
+- [&check;] coco
+- [~] kitti
+
 1. To check/validate coco format json annotation:
     ~~~
     coco_check.py [-h] [--jsonfile JSONFILE] [--logfile LOGFILE]
@@ -22,3 +26,8 @@ A open-source tool to support annotation files.
     ~~~
 
 ## TODO
+- [] visualise
+- [] merge
+- [] convert
+- [] extract category
+- [] split
