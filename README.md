@@ -5,9 +5,6 @@ A open-source tool to support annotation files.
 ## Features
 - coco format json check
 
-## Features
-- coco format json check
-
 ## Getting started
 
 ### Supported file
