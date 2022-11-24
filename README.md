@@ -9,7 +9,7 @@ A open-source tool to support annotation files.
 
 ### Supported file
 - [&check;] json
-- [ ] yml
+- [~] yml
 
 1. To check/validate coco format json annotation:
     ~~~
