@@ -6,16 +6,16 @@
 </div>
 
 <!-- A open-source tool to support annotation files. -->
-### :parrot: Features
+### :peacock: Features
 <small>
 
-- [x] Supported annotation format: **[COCO](https://cocodataset.org/#format-data)**
 - [x] **One script does it all**
     - [x] [analyse](#detective-analyse): Analyse and generate stats & plot
     - [x] [draw](#art-draw): Draw bbox/segm from annotation file 
     - [x] [split](#scissors-split): Split annotation file
     - [x] [merge](#beers-merge): Merge multiple annotations files
     - [x] [remove categories](#broom-remove-categories): Remove categories/corresponding annotations from annotation file
+- [x] Supported annotation format: **[COCO](https://cocodataset.org/#format-data)**
 
 :space_invader: This repo is constantly updated with the new features - check in regularly for updates!
 
