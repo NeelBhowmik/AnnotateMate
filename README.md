@@ -17,7 +17,7 @@
     - [x] [merge](#beers-merge): Merge multiple annotations files
     - [x] [remove categories](#broom-remove-categories): Remove categories/corresponding annotations from annotation file
 
-:space_invader: This repo is constantly updated with the latest algorithms and new features - check in regularly for updates!
+:space_invader: This repo is constantly updated with the new features - check in regularly for updates!
 
 </small>
 
