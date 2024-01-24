@@ -2,9 +2,9 @@
 <div align="center">
 
 **AnnotateMate: Open-source tool to analyse, modify COCO format annotation**
+
 ---
 </div>
-
 
 <!-- A open-source tool to support annotation files. -->
 ### :peacock: Features
