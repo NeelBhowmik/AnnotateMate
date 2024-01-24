@@ -7,6 +7,7 @@
 
 <!-- A open-source tool to support annotation files. -->
 ### :parrot: Features
+<small>
 - [x] Supported annotation format: **[COCO](https://cocodataset.org/#format-data)**
 - [x] **One script does it all**
     - [x] [analyse](#detective-analyse): Analyse and generate stats & plot
@@ -16,9 +17,8 @@
     - [x] [remove categories](#broom-remove-categories): Remove categories/corresponding annotations from annotation file
 
 :space_invader: This repo is constantly updated with the latest algorithms and new features - check in regularly for updates!
-<!-- ### Supported annotation format
-- [&check;] coco
-- [~] kitti -->
+</small>
+
 
 ## :wrench: Installation
 Install the requirements
