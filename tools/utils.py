@@ -151,12 +151,9 @@ def write_stats(log_file_path, data, stats):
                 f"Std Dev Center X = {std_dev_center_x:.2f}, Std Dev Center Y = {std_dev_center_y:.2f}\n"
             )
 
-            log_file.write(
-                f'  Small Objects: {object_sizes[category_id]["small"]}\n')
-            log_file.write(
-                f'  Medium Objects: {object_sizes[category_id]["medium"]}\n')
-            log_file.write(
-                f'  Large Objects: {object_sizes[category_id]["large"]}\n\n')
+            log_file.write(f'  Small Objects: {object_sizes[category_id]["small"]}\n')
+            log_file.write(f'  Medium Objects: {object_sizes[category_id]["medium"]}\n')
+            log_file.write(f'  Large Objects: {object_sizes[category_id]["large"]}\n\n')
 
 
 ################################################################################
@@ -174,8 +171,7 @@ def find_images_without_annotations(data):
     Returns:
         set: A set of image IDs that do not have any annotations.
     """
-    annotated_image_ids = {annotation["image_id"]
-                           for annotation in data["annotations"]}
+    annotated_image_ids = {annotation["image_id"] for annotation in data["annotations"]}
     all_image_ids = {image["id"] for image in data["images"]}
     images_without_annotations = all_image_ids - annotated_image_ids
 
@@ -210,8 +206,7 @@ def split(
 
     for i in range(num_parts):
         start_index = i * images_per_part
-        end_index = (i + 1) * images_per_part if i < num_parts - \
-            1 else total_images
+        end_index = (i + 1) * images_per_part if i < num_parts - 1 else total_images
 
         part_data = {
             "images": data["images"][start_index:end_index],
@@ -268,12 +263,10 @@ def remove_categories(data, category_ids, output_file):
     valid_image_ids = set(ann["image_id"] for ann in data["annotations"])
 
     # Filter out images that no longer have annotations
-    data["images"] = [img for img in data["images"]
-                      if img["id"] in valid_image_ids]
+    data["images"] = [img for img in data["images"] if img["id"] in valid_image_ids]
 
     # Reassign new unique IDs to images and update in annotations
-    image_id_mapping = {img["id"]: idx + 1 for idx,
-                        img in enumerate(data["images"])}
+    image_id_mapping = {img["id"]: idx + 1 for idx, img in enumerate(data["images"])}
     for img in data["images"]:
         img["id"] = image_id_mapping[img["id"]]
     for ann in data["annotations"]:
@@ -512,8 +505,7 @@ def merge(file_paths, output_file):
         dict(t) for t in {tuple(d.items()) for d in merged_data["categories"]}
     ]
     # Sort categories by ID in ascending order
-    merged_data["categories"] = sorted(
-        merged_data["categories"], key=lambda x: x["id"])
+    merged_data["categories"] = sorted(merged_data["categories"], key=lambda x: x["id"])
 
     # Extract filename
     filename = os.path.basename(output_file)
@@ -525,3 +517,129 @@ def merge(file_paths, output_file):
         json.dump(merged_data, f, indent=4)
 
     print(f"|__Merged json(s) written to: {output_file}")
+
+
+################################################################################
+
+"""Filter annotations by min max height/width"""
+
+
+def filter_annotation_img_size(
+    data, min_width, min_height, max_width, max_height, output_file
+):
+    """
+    Filter annotations based on image dimensions and save the filtered annotations to a JSON file.
+
+    Args:
+        data (dict): The annotation data containing images and annotations.
+        min_width (int): The minimum width threshold for filtering annotations.
+        min_height (int): The minimum height threshold for filtering annotations.
+        max_width (int): The maximum width threshold for filtering annotations.
+        max_height (int): The maximum height threshold for filtering annotations.
+        output_file (str): The path to the output JSON file.
+
+    Returns:
+        None
+    """
+    # Mapping from image IDs to their respective widths and heights
+    image_dimensions = {
+        image["id"]: (image["width"], image["height"]) for image in data["images"]
+    }
+
+    # Filter out annotations with image sizes outside the thresholds
+    data["annotations"] = [
+        ann
+        for ann in data["annotations"]
+        if min_width <= image_dimensions[ann["image_id"]][0] <= max_width
+        and min_height <= image_dimensions[ann["image_id"]][1] <= max_height
+    ]
+
+    # Find images that are still referenced by the remaining annotations
+    valid_image_ids = set(ann["image_id"] for ann in data["annotations"])
+
+    # Filter out images that no longer have annotations
+    data["images"] = [img for img in data["images"] if img["id"] in valid_image_ids]
+
+    # Reassign new unique IDs to images and update in annotations
+    image_id_mapping = {img["id"]: idx + 1 for idx, img in enumerate(data["images"])}
+    for img in data["images"]:
+        img["id"] = image_id_mapping[img["id"]]
+    for ann in data["annotations"]:
+        ann["image_id"] = image_id_mapping[ann["image_id"]]
+
+    # Reassign new unique IDs to annotations
+    for idx, ann in enumerate(data["annotations"]):
+        ann["id"] = idx + 1
+
+    # Extract filename
+    filename = os.path.basename(output_file)
+    # Extract path
+    out_dir = os.path.dirname(output_file)
+    os.makedirs(out_dir, exist_ok=True)
+
+    with open(output_file, "w") as f:
+        json.dump(data, f, indent=4)
+
+    print(f"Filtered annotation json written to: {output_file}")
+
+
+################################################################################
+
+"""Filter annotations by bbox min/max height/width"""
+
+
+def filter_annotation_bbox_size(
+    data, min_width, min_height, max_width, max_height, output_file
+):
+    """
+    Filter out annotations based on bounding box size constraints.
+
+    Args:
+        data (dict): The input data containing annotations and images.
+        min_width (int): The minimum width of the bounding box.
+        min_height (int): The minimum height of the bounding box.
+        max_width (int): The maximum width of the bounding box.
+        max_height (int): The maximum height of the bounding box.
+        output_file (str): The path to the output file where the filtered annotation JSON will be written.
+
+    Returns:
+        None
+    """
+
+    def is_bbox_within_thresholds(annotation):
+        _, _, bbox_width, bbox_height = annotation["bbox"]
+        return (min_width < bbox_width < max_width) and (
+            min_height < bbox_height < max_height
+        )
+
+    data["annotations"] = [
+        ann for ann in data["annotations"] if is_bbox_within_thresholds(ann)
+    ]
+
+    # Find images that are still referenced by the remaining annotations
+    valid_image_ids = set(ann["image_id"] for ann in data["annotations"])
+
+    # Filter out images that no longer have annotations
+    data["images"] = [img for img in data["images"] if img["id"] in valid_image_ids]
+
+    # Reassign new unique IDs to images and update in annotations
+    image_id_mapping = {img["id"]: idx + 1 for idx, img in enumerate(data["images"])}
+    for img in data["images"]:
+        img["id"] = image_id_mapping[img["id"]]
+    for ann in data["annotations"]:
+        ann["image_id"] = image_id_mapping[ann["image_id"]]
+
+    # Reassign new unique IDs to annotations
+    for idx, ann in enumerate(data["annotations"]):
+        ann["id"] = idx + 1
+
+    # Extract filename
+    filename = os.path.basename(output_file)
+    # Extract path
+    out_dir = os.path.dirname(output_file)
+    os.makedirs(out_dir, exist_ok=True)
+
+    with open(output_file, "w") as f:
+        json.dump(data, f, indent=4)
+
+    print(f"Filtered annotation json written to: {output_file}")

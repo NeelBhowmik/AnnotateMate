@@ -16,6 +16,7 @@
     - [x] [split](#scissors-split): Split annotation file
     - [x] [merge](#beers-merge): Merge multiple annotations files
     - [x] [remove categories](#broom-remove-categories): Remove categories/corresponding annotations from annotation file
+    - [x] [filter annotation](#mag-filter-annotation ): Filter annotations by bbox min/max height/width
 - [x] Supported annotation format: **[COCO](https://cocodataset.org/#format-data)**
 
 :space_invader: This repo is constantly updated with the new features - check in regularly for updates!
@@ -109,6 +110,19 @@ python3 main.py \
     <path/to/coco-json> \
     --remove_categories 2 3 \
     --output_annotation <path/to/save/remove-cat/annotation-josn>
+~~~
+
+### :mag: Filter Annotation 
+Filter annotations by bbox min/max height/width
+~~~
+python3 main.py \
+    <path/to/coco-json> \
+    coco_data,
+    --min_width 20
+    --min_height 20
+    --max_width 150
+    --max_height 160
+    --output_annotation <path/to/save/filter/annotation-josn>
 ~~~
 
 ## :frog: Reference

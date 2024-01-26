@@ -26,7 +26,7 @@ def main():
 
     Arguments:
         annotation_file         Path to the COCO annotation file(s)
-        
+
     Optional Arguments:
         --log_file              Path to the output log file (default: logs/coco_stats_log.log)
         --split                 Number of parts to split the JSON file into (default: 1)
@@ -107,6 +107,36 @@ def main():
         default="logs/coco_plot.png",
         help="File path to save stats plot image",
     )
+    parser.add_argument(
+        "--filter_annotation",
+        action="store_true",
+        help="Filter annotation by bbox min/max height/width",
+    )
+    parser.add_argument(
+        "--min_width",
+        type=int,
+        help="Minimum width threshold for bbox",
+        default=0,
+    )
+    parser.add_argument(
+        "--min_height",
+        type=int,
+        help="Minimum height threshold for bbox",
+        default=0,
+    )
+    parser.add_argument(
+        "--max_width",
+        type=int,
+        help="Maximum width threshold for bbox",
+        default=float("inf"),
+    )
+    parser.add_argument(
+        "--max_height",
+        type=int,
+        help="Maximum height threshold for bbox",
+        default=float("inf"),
+    )
+
     args = parser.parse_args()
     t_val = []
     for arg in vars(args):
@@ -145,9 +175,7 @@ def main():
         # Split the json file into multiple parts
         if args.split > 1:
             print(f"|__Splitting into {args.split_parts} parts")
-            utils.split(
-                coco_data, args.split_parts, args.output_annotation
-            )
+            utils.split(coco_data, args.split_parts, args.output_annotation)
 
         # Remove specified categories and save the updated data
         if args.remove_categories:
@@ -160,6 +188,18 @@ def main():
         if args.draw:
             print(f"|__Drawing bbox/segm annotation: {args.output_draw}")
             utils.draw_annotations(coco_data, args.image_dir, args.output_draw)
+
+        # Filter annotations by min max height/width
+        if args.filter_annotation:
+            print(f"|__Filter annotations by bbox min/max height/width: {args.min_width}/{args.min_height}, {args.max_width}/{args.max_height}")
+            utils.filter_annotation_bbox_size(
+                coco_data,
+                args.min_width,
+                args.min_height,
+                args.max_width,
+                args.max_height,
+                args.output_annotation,
+            )
 
     print("\n\n[Done]")
 
