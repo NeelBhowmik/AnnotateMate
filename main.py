@@ -11,35 +11,8 @@ import tools.utils as utils
 ################################################################################
 # Main function
 
-
 def main():
-    """
-    Entry point of the COCO annotation helper script.
-    Parses command line arguments, performs various operations on COCO annotation files,
-    and displays the results.
-
-    Usage:
-        python main.py [annotation_file ...] [--log_file LOG_FILE] [--split_parts SPLIT_PARTS]
-                       [--remove_categories REMOVE_CATEGORIES ...] [--output_annotation OUTPUT_ANNOTATION]
-                       [--draw] [--merge] [--image_dir IMAGE_DIR] [--output_draw OUTPUT_DRAW]
-                       [--stat] [--plot_stat] [--output_plot OUTPUT_PLOT]
-
-    Arguments:
-        annotation_file         Path to the COCO annotation file(s)
-
-    Optional Arguments:
-        --log_file              Path to the output log file (default: logs/coco_stats_log.log)
-        --split                 Number of parts to split the JSON file into (default: 1)
-        --remove_categories     List of category IDs to remove
-        --output_annotation     Directory to save output annotation file (default: logs/out.json)
-        --draw                  Draw bounding boxes or masks
-        --merge                 Merge multiple coco-json files
-        --image_dir             Directory to image directory
-        --output_draw           Directory to save bbox/mask draw images (default: output_draw)
-        --stat                  Analyse annotation stats
-        --plot_stat             Plot category-wise annotation counts
-        --output_plot           File path to save stats plot image (default: logs/coco_plot.png)
-    """
+     
     parser = argparse.ArgumentParser(description="COCO annotation helper.")
     parser.add_argument(
         "annotation_file",

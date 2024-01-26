@@ -36,7 +36,8 @@ Run the `main.py` with different command line options:
 ~~~
 main.py [-h] [--log_file LOG_FILE] [--split SPLIT] [--remove_categories REMOVE_CATEGORIES [REMOVE_CATEGORIES ...]]
                [--output_annotation OUTPUT_ANNOTATION] [--draw] [--merge] [--image_dir IMAGE_DIR]
-               [--output_draw OUTPUT_DRAW] [--stat] [--plot_stat] [--output_plot OUTPUT_PLOT]
+               [--output_draw OUTPUT_DRAW] [--stat] [--plot_stat] [--output_plot OUTPUT_PLOT] [--filter_annotation]
+               [--min_width MIN_WIDTH] [--min_height MIN_HEIGHT] [--max_width MAX_WIDTH] [--max_height MAX_HEIGHT]
                annotation_file [annotation_file ...]
 
 COCO annotation helper.
@@ -62,6 +63,15 @@ options:
   --plot_stat           Plot category-wise annotation counts
   --output_plot OUTPUT_PLOT
                         File path to save stats plot image
+  --filter_annotation   Filter annotation by bbox min/max height/width
+  --min_width MIN_WIDTH
+                        Minimum width threshold for bbox
+  --min_height MIN_HEIGHT
+                        Minimum height threshold for bbox
+  --max_width MAX_WIDTH
+                        Maximum width threshold for bbox
+  --max_height MAX_HEIGHT
+                        Maximum height threshold for bbox
 ~~~
 
 ### :detective: Analyse 
