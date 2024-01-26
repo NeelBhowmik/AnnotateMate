@@ -117,11 +117,10 @@ Filter annotations by bbox min/max height/width
 ~~~
 python3 main.py \
     <path/to/coco-json> \
-    coco_data,
-    --min_width 20
-    --min_height 20
-    --max_width 150
-    --max_height 160
+    --min_width 20 \
+    --min_height 20 \
+    --max_width 150 \
+    --max_height 160 \
     --output_annotation <path/to/save/filter/annotation-josn>
 ~~~
 
