@@ -6,6 +6,7 @@ import cv2
 from collections import defaultdict
 import matplotlib.pyplot as plt
 import os
+import pycocotools.mask as mask_utils
 
 ################################################################################
 
@@ -345,23 +346,44 @@ def draw_annotations(data, image_dir, output_dir):
                 # Alternatively, if segmentation information is available, you can draw masks
                 if "segmentation" in annotation:
                     segmentation = annotation["segmentation"]
-                    if len(segmentation) > 0:
-                        # Create a white mask
-                        mask = np.zeros_like(img, dtype=np.uint8)
 
-                        # Draw the contour on the mask
-                        cv2.drawContours(
-                            mask,
-                            [
-                                np.array(segmentation)
-                                .reshape((-1, 1, 2))
-                                .astype(np.int32)
-                            ],
-                            -1,
-                            (255, 255, 255),
-                            thickness=cv2.FILLED,
-                        )
-                        # Blend the mask with the original image using transparency
+                    if len(segmentation) > 0:
+                        if 'counts' in segmentation:
+                            rle = segmentation
+                            if isinstance(rle, dict):  # RLE format
+                                mask = mask_utils.decode(rle)
+                            else:  # Polygon format
+                                # Create an empty mask and draw the polygons
+                                mask = np.zeros((img.shape[0], img.shape[1]), dtype=np.uint8)
+                                
+                                for seg in rle:
+                                    poly = np.array(seg).reshape((-1, 1, 2))
+                                    cv2.fillPoly(mask, [poly], 1)
+
+                            if mask is not None:
+                                # Convert mask to three channels and same data type as image
+                                mask = np.repeat(mask[:, :, np.newaxis], 3, axis=2)
+                                mask = mask * np.array([255, 255, 255], dtype=img.dtype)
+                                # img = cv2.addWeighted(img, 1.0, mask, 0.5, 0)
+                        
+                        else:
+                            for seg in segmentation:
+                                # Create a white mask
+                                mask = np.zeros_like(img, dtype=np.uint8)
+
+                                # Draw the contour on the mask
+                                cv2.drawContours(
+                                    mask,
+                                    [
+                                        np.array([seg])
+                                        .reshape((-1, 1, 2))
+                                        .astype(np.int32)
+                                    ],
+                                    -1,
+                                    (255, 255, 255),
+                                    thickness=cv2.FILLED,
+                                )
+                            # Blend the mask with the original image using transparency
                         img = cv2.addWeighted(img, 1, mask, 0.5, 0)
 
         output_image_path = f"{output_dir}/{file_name}"

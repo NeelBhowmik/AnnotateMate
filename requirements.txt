@@ -2,3 +2,4 @@ numpy
 tabulate
 opencv-python
 matplotlib
+pycocotools
