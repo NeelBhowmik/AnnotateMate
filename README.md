@@ -1,6 +1,8 @@
 
 <div align="center">
 
+<img src="images/a_logo.png" width="200px"> 
+
 **AnnotateMate: Open-source tool to analyse, modify COCO format annotation**
 
 ---
