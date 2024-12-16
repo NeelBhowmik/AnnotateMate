@@ -109,6 +109,12 @@ def main():
         help="Maximum height threshold for bbox",
         default=float("inf"),
     )
+    parser.add_argument(
+        "--update_hw",
+        action="store_true",
+        help="To update the coco json file with height and width of the images",
+    )
+
 
     args = parser.parse_args()
     t_val = []
@@ -173,6 +179,10 @@ def main():
                 args.max_height,
                 args.output_annotation,
             )
+        
+        if args.update_hw:
+            print(f"|__Updating Coco json: {args.output_annotation}")
+            utils.update_image_dimensions(coco_data, args.image_dir, args.output_annotation)
 
     print("\n\n[Done]")
 

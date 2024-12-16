@@ -314,8 +314,11 @@ def draw_annotations(data, image_dir, output_dir):
         file_name = image_info["file_name"]
         image_path = f"{image_dir}/{file_name}"
 
+        # print(f"width height: {image_info['height']} {image_info['width']}")
+
         img = cv2.imread(image_path)
         h, w, c = img.shape
+
         # img_mask = np.zeros((h, w, 3), dtype = "uint8")
 
         for annotation in annotations:
@@ -386,7 +389,12 @@ def draw_annotations(data, image_dir, output_dir):
                             # Blend the mask with the original image using transparency
                         img = cv2.addWeighted(img, 1, mask, 0.5, 0)
 
+        tmp_path = os.path.dirname(file_name)
+        if tmp_path is not None:
+            os.makedirs(f'{output_dir}/{tmp_path}', exist_ok=True)
+
         output_image_path = f"{output_dir}/{file_name}"
+
         cv2.imwrite(output_image_path, img)
 
         # print(f"Annotations drawn on {output_image_path}")
@@ -424,9 +432,11 @@ def plot_stats(data, plot_output_path):
     categories = data["categories"]
     category_names = [category["name"] for category in categories]
     category_ids = list(category_counts.keys())
-    counts = [category_counts[cat_id] for cat_id in category_ids]
-
-    # Choose a colormap, e.g., viridis
+    # counts = [category_counts[cat_id] for cat_id in category_ids]
+    counts = [0] * len(category_ids)
+    for i in category_ids:
+        counts[i-1] = category_counts[i]
+        # Choose a colormap, e.g., viridis
     colors = plt.cm.Pastel1(np.linspace(0, 1, len(category_names)))
     plt.figure(figsize=(8, 6))
     bars = plt.bar(category_names, counts, color=colors, width=0.6)
@@ -665,3 +675,38 @@ def filter_annotation_bbox_size(
         json.dump(data, f, indent=4)
 
     print(f"Filtered annotation json written to: {output_file}")
+
+################################################################################
+
+def update_image_dimensions(coco_data, image_dir, output_file):
+    
+    updated_count = 0
+    # Iterate over each image in the COCO JSON
+    for image_info in coco_data['images']:
+        # Construct the full image path
+        image_path = os.path.join(image_dir, image_info['file_name'])
+        
+        # Check if the image exists
+        if os.path.exists(image_path):
+            # Read the image using OpenCV
+            img = cv2.imread(image_path)
+            if img is not None:
+                # Update the width and height in the COCO JSON
+                height, width = img.shape[:2]
+                image_info['width'] = width
+                image_info['height'] = height
+                updated_count += 1
+            else:
+                print(f"Warning: Unable to read {image_path}")
+        else:
+            print(f"Warning: Image file {image_info['file_name']} not found in {image_dir}")
+    
+    # Save the updated COCO JSON
+    out_dir = os.path.dirname(output_file)
+    os.makedirs(out_dir, exist_ok=True)
+    
+    with open(output_file, 'w') as f:
+        json.dump(coco_data, f, indent=4)
+    
+    print(f"Updated dimensions for {updated_count} images in the COCO JSON.")
+
